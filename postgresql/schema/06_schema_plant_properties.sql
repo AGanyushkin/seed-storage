@@ -15,7 +15,7 @@ CREATE TYPE plant_property_type_enum AS ENUM (
 
 CREATE TABLE IF NOT EXISTS plant_property_type (
     id      SERIAL PRIMARY KEY,
-    type    plant_property_type_enum
+    type    plant_property_type_enum NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_group (
@@ -25,8 +25,9 @@ CREATE TABLE IF NOT EXISTS plant_property_group (
 CREATE TABLE IF NOT EXISTS plant_property_group_name (
     id                          SERIAL PRIMARY KEY,
     language_id                 SMALLINT NOT NULL REFERENCES language(id),
-    text                        VARCHAR(255),
-    plant_property_group_id     INTEGER NOT NULL REFERENCES plant_property_group(id)
+    text                        VARCHAR(255) NOT NULL CHECK ( char_length(text) > 3 ),
+    plant_property_group_id     INTEGER NOT NULL REFERENCES plant_property_group(id),
+    UNIQUE (language_id, plant_property_group_id)
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_unit (
@@ -36,8 +37,9 @@ CREATE TABLE IF NOT EXISTS plant_property_unit (
 CREATE TABLE IF NOT EXISTS plant_property_unit_name (
     id                          SERIAL PRIMARY KEY,
     language_id                 SMALLINT NOT NULL REFERENCES language(id),
-    text                        VARCHAR(255),
-    plant_property_unit_id      INTEGER NOT NULL REFERENCES plant_property_unit(id)
+    text                        VARCHAR(255) NOT NULL CHECK ( char_length(text) > 3 ),
+    plant_property_unit_id      INTEGER NOT NULL REFERENCES plant_property_unit(id),
+    UNIQUE (language_id, plant_property_unit_id)
 );
 
 CREATE TABLE IF NOT EXISTS plant_property (
@@ -50,27 +52,29 @@ CREATE TABLE IF NOT EXISTS plant_property (
 CREATE TABLE IF NOT EXISTS plant_property_name (
     id                          SERIAL PRIMARY KEY,
     language_id                 SMALLINT NOT NULL REFERENCES language(id),
-    text                        VARCHAR(255),
-    plant_property_id           INTEGER NOT NULL REFERENCES plant_property(id)
+    text                        VARCHAR(255) NOT NULL CHECK ( char_length(text) > 3 ),
+    plant_property_id           INTEGER NOT NULL REFERENCES plant_property(id),
+    UNIQUE (language_id, plant_property_id)
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_set_tag (
     id                          SERIAL PRIMARY KEY,
     plant_property_id           INTEGER NOT NULL REFERENCES plant_property(id),
-    sort_value                  INTEGER NOT NULL DEFAULT 0
+    sort_value                  INTEGER UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_set_tag_name (
     id                          SERIAL PRIMARY KEY,
     language_id                 SMALLINT NOT NULL REFERENCES language(id),
-    text                        VARCHAR(255),
-    plant_property_set_tag_id   INTEGER NOT NULL REFERENCES plant_property_set_tag(id)
+    text                        VARCHAR(255) NOT NULL CHECK ( char_length(text) > 3 ),
+    plant_property_set_tag_id   INTEGER NOT NULL REFERENCES plant_property_set_tag(id),
+    UNIQUE (language_id, plant_property_set_tag_id)
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_set_float (
     id                          SERIAL PRIMARY KEY,
     plant_property_id           INTEGER NOT NULL REFERENCES plant_property(id),
-    value                       FLOAT
+    value                       FLOAT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_set_int (
@@ -82,19 +86,22 @@ CREATE TABLE IF NOT EXISTS plant_property_set_int (
 CREATE TABLE IF NOT EXISTS plant_property_range_float (
     id                          INTEGER PRIMARY KEY REFERENCES plant_property(id),
     value_from                  FLOAT NOT NULL,
-    value_to                    FLOAT NOT NULL
+    value_to                    FLOAT NOT NULL,
+    CHECK ( value_from <= value_to )
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_range_int (
     id                          INTEGER PRIMARY KEY REFERENCES plant_property(id),
     value_from                  INTEGER NOT NULL,
-    value_to                    INTEGER NOT NULL
+    value_to                    INTEGER NOT NULL,
+    CHECK ( value_from <= value_to )
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_value (
     id                          SERIAL PRIMARY KEY,
     plant_id                    INTEGER NOT NULL REFERENCES plant(id),
-    plant_property_id           INTEGER NOT NULL REFERENCES plant_property(id)
+    plant_property_id           INTEGER NOT NULL REFERENCES plant_property(id),
+    UNIQUE (plant_id, plant_property_id)
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_value_to_plant_property_set_tag (
@@ -117,11 +124,13 @@ CREATE TABLE IF NOT EXISTS plant_property_value_float (
 CREATE TABLE IF NOT EXISTS plant_property_value_range_int (
     id                          INTEGER PRIMARY KEY REFERENCES plant_property_value(id),
     value_from                  INTEGER NOT NULL,
-    value_to                    INTEGER NOT NULL
+    value_to                    INTEGER NOT NULL,
+    CHECK ( value_from <= value_to )
 );
 
 CREATE TABLE IF NOT EXISTS plant_property_value_range_float (
     id                          INTEGER PRIMARY KEY REFERENCES plant_property_value(id),
     value_from                  FLOAT NOT NULL,
-    value_to                    FLOAT NOT NULL
+    value_to                    FLOAT NOT NULL,
+    CHECK ( value_from <= value_to )
 );
