@@ -10,14 +10,45 @@ CREATE TABLE IF NOT EXISTS plant_name (
     plant_id        INTEGER NOT NULL REFERENCES plant(id),
     PRIMARY KEY (language_id, plant_id)
 );
+--- create index for full text search
+CREATE INDEX plant_name_idx_gin_text_ru
+ON plant_name
+USING GIN (to_tsvector('russian', "text"))
+WHERE language_id = 1
+;
+CREATE INDEX plant_name_idx_gin_text_en
+ON plant_name
+USING GIN (to_tsvector('english', "text"))
+WHERE language_id = 2
+;
+CREATE INDEX plant_name_idx_gin_text_la
+ON plant_name
+USING GIN (to_tsvector('english', "text"))
+WHERE language_id = 3
+;
 
 CREATE TABLE IF NOT EXISTS plant_name_alias (
     id              BIGSERIAL PRIMARY KEY,
     language_id     SMALLINT NOT NULL REFERENCES language(id),
-    text            VARCHAR(255) NOT NULL,
-    plant_id        INTEGER NOT NULL REFERENCES plant(id),
-    UNIQUE (language_id, text)
+    text            VARCHAR(512) NOT NULL,
+    plant_id        INTEGER NOT NULL REFERENCES plant(id)
 );
+--- create index for full text search
+CREATE INDEX plant_name_alias_idx_gin_text_ru
+ON plant_name_alias
+USING GIN (to_tsvector('russian', "text"))
+WHERE language_id = 1
+;
+CREATE INDEX plant_name_alias_idx_gin_text_en
+ON plant_name_alias
+USING GIN (to_tsvector('english', "text"))
+WHERE language_id = 2
+;
+CREATE INDEX plant_name_alias_idx_gin_text_la
+ON plant_name_alias
+USING GIN (to_tsvector('english', "text"))
+WHERE language_id = 3
+;
 
 DROP TYPE IF EXISTS plant_image_mimetype_enum CASCADE;
 CREATE TYPE plant_image_mimetype_enum AS ENUM (
