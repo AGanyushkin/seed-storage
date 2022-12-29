@@ -19,3 +19,9 @@ This is a "second final" :) version of SEED storage which was designed in Postgr
 ### seed_core_db concept
 ![plant_storage_concept.png](assets/plant_storage_concept.png)
 
+
+# Updated Docker image
+
+Added ability to create databases with ru_RU.utf8 locale
+
+[postgres-with-locale-ru](https://hub.docker.com/r/aganyushkin/postgres-with-locale-ru)
