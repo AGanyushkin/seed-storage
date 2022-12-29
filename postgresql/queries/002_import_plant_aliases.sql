@@ -1,9 +1,9 @@
 --- move aliases
 INSERT INTO plant_name_alias (language_id, text, plant_id)
-SELECT 1, source.name, p.id
+SELECT 3, source.name, p.id
 FROM "fwd_mimir_plants_public"."bio_graph_plant_source_name_variant" as source
 LEFT JOIN "public".plant p on source.plant_id = p.global_id
-WHERE "type" = 'TEXT' AND source.name is not null AND source.plant_id is not null AND source.lang = 'ru'
+WHERE "type" = 'TEXT' AND source.name is not null AND source.plant_id is not null AND source.lang = 'lat'
 ;
 SELECT count(id)
 FROM plant_name_alias

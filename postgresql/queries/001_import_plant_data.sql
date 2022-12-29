@@ -10,10 +10,10 @@ FROM "public"."plant"
 
 --- move plant names
 INSERT INTO "public"."plant_name" (language_id, text, plant_id)
-SELECT 3, lat, newplant.id
+SELECT 1, ru, newplant.id
 FROM "fwd_mimir_plants_public"."bio_graph_plant" as sourceT
 LEFT JOIN "public"."plant" newplant on sourceT.id = newplant.global_id
-WHERE lat is not null
+WHERE ru is not null
 ;
 SELECT count(*)
 FROM "public"."plant_name"
